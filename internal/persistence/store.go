@@ -55,14 +55,17 @@ func (s *Store) Get(id string) (domain.SampleBatch, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	b, ok := s.batches[id]
-	return b, ok
+	if !ok {
+		return domain.SampleBatch{}, false
+	}
+	return cloneBatch(b), true
 }
 func (s *Store) List() []domain.SampleBatch {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	out := make([]domain.SampleBatch, 0, len(s.batches))
 	for _, b := range s.batches {
-		out = append(out, b)
+		out = append(out, cloneBatch(b))
 	}
 	return out
 }
@@ -104,7 +107,7 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	}
 	s.seq = nextSequence
 	s.lastHash = hash
-	s.batches[id] = batch
+	s.batches[id] = cloneBatch(batch)
 	s.events[id] = append(s.events[id], audit)
 	s.ledger = append(s.ledger, audit)
 	if idem != "" {
@@ -211,4 +214,51 @@ func (s *Store) replayEvents() error {
 		s.lastHash = expectedPrev
 	}
 	return nil
+}
+
+// cloneBatch returns a value copy of the batch so that callers mutating the
+// returned value (including evidence slice elements or pointed-to review and
+// certificate structs) cannot pollute the store's in-memory state. This keeps
+// failed Save attempts from leaking partial domain mutations back to readers.
+func cloneBatch(b domain.SampleBatch) domain.SampleBatch {
+	out := b
+	if b.Evidence != nil {
+		out.Evidence = make([]domain.FieldEvidence, len(b.Evidence))
+		copy(out.Evidence, b.Evidence)
+		for i := range out.Evidence {
+			if b.Evidence[i].Environment != nil {
+				out.Evidence[i].Environment = cloneEnv(b.Evidence[i].Environment)
+			}
+			if b.Evidence[i].Check != nil {
+				check := *b.Evidence[i].Check
+				out.Evidence[i].Check = &check
+			}
+		}
+	}
+	if b.Review != nil {
+		review := *b.Review
+		if review.Issues != nil {
+			review.Issues = append([]string(nil), review.Issues...)
+		}
+		out.Review = &review
+	}
+	if b.Certificate != nil {
+		cert := *b.Certificate
+		out.Certificate = &cert
+	}
+	if b.OpenIssues != nil {
+		out.OpenIssues = append([]string(nil), b.OpenIssues...)
+	}
+	return out
+}
+
+func cloneEnv(env map[string]float64) map[string]float64 {
+	if env == nil {
+		return nil
+	}
+	out := make(map[string]float64, len(env))
+	for k, v := range env {
+		out[k] = v
+	}
+	return out
 }
