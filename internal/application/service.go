@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/benzhi/city-tree-release/internal/domain"
@@ -17,6 +18,7 @@ var ErrConflict = errors.New("版本冲突")
 
 type Service struct {
 	repo                 persistence.Repository
+	certificateCacheMu   sync.RWMutex
 	verifiedCertificates map[string]map[string]any
 }
 
@@ -239,9 +241,14 @@ func (s *Service) VerifyCertificate(id string) (map[string]any, error) {
 	}
 	allEvents := s.repo.AllEvents()
 	cacheKey := certificateCacheKey(b, allEvents)
-	if cached, ok := s.verifiedCertificates[cacheKey]; ok {
+
+	s.certificateCacheMu.RLock()
+	cached, ok := s.verifiedCertificates[cacheKey]
+	s.certificateCacheMu.RUnlock()
+	if ok {
 		return cloneVerificationResult(cached), nil
 	}
+
 	result := map[string]any{"valid": false, "credential": b.Certificate.Credential, "batchId": id, "issuedAt": b.Certificate.IssuedAt}
 	digest := domain.LegacyFreezeDigest(b)
 	if b.Certificate.FreezeVersion == "v2" {
@@ -262,7 +269,10 @@ func (s *Service) VerifyCertificate(id string) (map[string]any, error) {
 	}
 	result["valid"] = true
 	result["reason"] = "凭据有效"
+
+	s.certificateCacheMu.Lock()
 	s.verifiedCertificates[cacheKey] = cloneVerificationResult(result)
+	s.certificateCacheMu.Unlock()
 	return result, nil
 }
 
