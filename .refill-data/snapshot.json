@@ -115,6 +115,73 @@
       },
       "evidenceScore": 0
     },
+    "batch-69578b8e1ae7f1ac": {
+      "batchId": "batch-69578b8e1ae7f1ac",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "已放行",
+      "version": 4,
+      "createdAt": "2026-08-25T08:19:23.976198852Z",
+      "updatedAt": "2026-08-25T08:19:23.978127151Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-26cf862c0a896b26",
+          "batchId": "batch-69578b8e1ae7f1ac",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-25T08:19:23.976780213Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-25T08:19:23.977225328Z"
+          }
+        }
+      ],
+      "review": {
+        "reviewId": "review-03dea482953f038f",
+        "batchId": "batch-69578b8e1ae7f1ac",
+        "conclusion": "轻度叶斑，风险低",
+        "riskLevel": "低",
+        "issues": [],
+        "rectification": "",
+        "reviewOpinion": "",
+        "reviewer": "自检鉴定员",
+        "reviewedAt": "2026-08-25T08:19:23.977626161Z"
+      },
+      "certificate": {
+        "dispositionId": "disp-26240f0fca220a6d",
+        "batchId": "batch-69578b8e1ae7f1ac",
+        "plan": "隔离病株；持续观察",
+        "disposition": {
+          "name": "叶斑处置",
+          "steps": [
+            "隔离病株",
+            "持续观察"
+          ],
+          "window": "2026-08-25 14:00-16:00",
+          "owner": "自检绿化组"
+        },
+        "executionWindow": "2026-08-25 14:00-16:00",
+        "freezeDigest": "d1a75b5c7bb8d48e3d04c507c20a28fd52c4c69a7c7a43098e20316f43bc9d46",
+        "freezeVersion": "v2",
+        "credential": "CERT-d1a75b5c7bb8d48e",
+        "issuer": "自检复核员",
+        "issuedAt": "2026-08-25T08:19:23.978127151Z"
+      },
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-25T08:19:23.977225328Z"
+    },
     "batch-886777bdad49ebd6": {
       "batchId": "batch-886777bdad49ebd6",
       "location": "静安公园 A 区",
@@ -508,6 +575,19 @@
       "updatedAt": "2026-08-25T00:13:38.146525353Z",
       "evidenceScore": 0
     },
+    "selfcheck-create-1787645963976196552": {
+      "batchId": "batch-69578b8e1ae7f1ac",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待采集",
+      "version": 0,
+      "createdAt": "2026-08-25T08:19:23.976198852Z",
+      "updatedAt": "2026-08-25T08:19:23.976198852Z",
+      "evidenceScore": 0
+    },
     "selfcheck-evidence-1787613213672582236": {
       "evidenceId": "evidence-a09c433f472500d9",
       "batchId": "batch-3704a7c8518081ee",
@@ -631,6 +711,35 @@
           },
           "notes": "自检证据",
           "submittedAt": "2026-08-25T00:13:38.147606616Z",
+          "integrity": "待检查"
+        }
+      ],
+      "evidenceScore": 0
+    },
+    "selfcheck-evidence-1787645963976196552": {
+      "batchId": "batch-69578b8e1ae7f1ac",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待检查",
+      "version": 1,
+      "createdAt": "2026-08-25T08:19:23.976198852Z",
+      "updatedAt": "2026-08-25T08:19:23.976781433Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-26cf862c0a896b26",
+          "batchId": "batch-69578b8e1ae7f1ac",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-25T08:19:23.976780213Z",
           "integrity": "待检查"
         }
       ],
@@ -820,6 +929,73 @@
       "evidenceScore": 100,
       "evidenceCheckedAt": "2026-08-25T00:13:38.148629704Z"
     },
+    "selfcheck-release-1787645963976196552": {
+      "batchId": "batch-69578b8e1ae7f1ac",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "已放行",
+      "version": 4,
+      "createdAt": "2026-08-25T08:19:23.976198852Z",
+      "updatedAt": "2026-08-25T08:19:23.978127151Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-26cf862c0a896b26",
+          "batchId": "batch-69578b8e1ae7f1ac",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-25T08:19:23.976780213Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-25T08:19:23.977225328Z"
+          }
+        }
+      ],
+      "review": {
+        "reviewId": "review-03dea482953f038f",
+        "batchId": "batch-69578b8e1ae7f1ac",
+        "conclusion": "轻度叶斑，风险低",
+        "riskLevel": "低",
+        "issues": [],
+        "rectification": "",
+        "reviewOpinion": "",
+        "reviewer": "自检鉴定员",
+        "reviewedAt": "2026-08-25T08:19:23.977626161Z"
+      },
+      "certificate": {
+        "dispositionId": "disp-26240f0fca220a6d",
+        "batchId": "batch-69578b8e1ae7f1ac",
+        "plan": "隔离病株；持续观察",
+        "disposition": {
+          "name": "叶斑处置",
+          "steps": [
+            "隔离病株",
+            "持续观察"
+          ],
+          "window": "2026-08-25 14:00-16:00",
+          "owner": "自检绿化组"
+        },
+        "executionWindow": "2026-08-25 14:00-16:00",
+        "freezeDigest": "d1a75b5c7bb8d48e3d04c507c20a28fd52c4c69a7c7a43098e20316f43bc9d46",
+        "freezeVersion": "v2",
+        "credential": "CERT-d1a75b5c7bb8d48e",
+        "issuer": "自检复核员",
+        "issuedAt": "2026-08-25T08:19:23.978127151Z"
+      },
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-25T08:19:23.977225328Z"
+    },
     "selfcheck-review-1787613213672582236": {
       "reviewId": "review-6a2543ce0718c1e8",
       "batchId": "batch-3704a7c8518081ee",
@@ -969,6 +1145,53 @@
       "evidenceScore": 100,
       "evidenceCheckedAt": "2026-08-25T00:13:38.148629704Z"
     },
+    "selfcheck-review-1787645963976196552": {
+      "batchId": "batch-69578b8e1ae7f1ac",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待复核",
+      "version": 3,
+      "createdAt": "2026-08-25T08:19:23.976198852Z",
+      "updatedAt": "2026-08-25T08:19:23.977626405Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-26cf862c0a896b26",
+          "batchId": "batch-69578b8e1ae7f1ac",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-25T08:19:23.976780213Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-25T08:19:23.977225328Z"
+          }
+        }
+      ],
+      "review": {
+        "reviewId": "review-03dea482953f038f",
+        "batchId": "batch-69578b8e1ae7f1ac",
+        "conclusion": "轻度叶斑，风险低",
+        "riskLevel": "低",
+        "issues": [],
+        "rectification": "",
+        "reviewOpinion": "",
+        "reviewer": "自检鉴定员",
+        "reviewedAt": "2026-08-25T08:19:23.977626161Z"
+      },
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-25T08:19:23.977225328Z"
+    },
     "selfcheck-screen-1787613213672582236": {
       "result": "通过"
     },
@@ -1055,8 +1278,44 @@
       ],
       "evidenceScore": 100,
       "evidenceCheckedAt": "2026-08-25T00:13:38.148629704Z"
+    },
+    "selfcheck-screen-1787645963976196552": {
+      "batchId": "batch-69578b8e1ae7f1ac",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待鉴定",
+      "version": 2,
+      "createdAt": "2026-08-25T08:19:23.976198852Z",
+      "updatedAt": "2026-08-25T08:19:23.977225328Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-26cf862c0a896b26",
+          "batchId": "batch-69578b8e1ae7f1ac",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-25T08:19:23.976780213Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-25T08:19:23.977225328Z"
+          }
+        }
+      ],
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-25T08:19:23.977225328Z"
     }
   },
-  "sequence": 35,
-  "lastHash": "f5659522e639e389e5c29fee12a1635dfc9e8df12fe5a1c9f4c8432265743d2f"
+  "sequence": 40,
+  "lastHash": "18f6002fa6e5b38617a8c4ec5db76fe4a15baa73b9ae010046fe412ed4d5d5b7"
 }
