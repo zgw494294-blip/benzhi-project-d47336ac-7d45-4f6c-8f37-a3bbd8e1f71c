@@ -107,10 +107,27 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	s.batches[id] = batch
 	s.events[id] = append(s.events[id], audit)
 	s.ledger = append(s.ledger, audit)
+	addedIdempotency := false
 	if idem != "" {
-		s.idempotency[idem] = json.RawMessage(response)
+		if _, exists := s.idempotency[idem]; !exists {
+			s.idempotency[idem] = json.RawMessage(response)
+			addedIdempotency = true
+		}
 	}
-	return s.writeSnapshot()
+	if err := s.writeSnapshot(); err != nil {
+		// Snapshot persistence failed: the batch/event/sequence state above is
+		// intentionally retained so that a retried write advances the chain
+		// (next sequence number and previous hash) instead of duplicating the
+		// already-appended audit event. The idempotency result, however, must
+		// only become visible after the batch and response are durably stored;
+		// otherwise a retry would short-circuit on stale in-memory state and
+		// return success for a batch that was never persisted to the snapshot.
+		if addedIdempotency {
+			delete(s.idempotency, idem)
+		}
+		return err
+	}
+	return nil
 }
 
 func (s *Store) Idempotent(idem string) (json.RawMessage, bool) {
