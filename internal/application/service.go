@@ -90,6 +90,7 @@ func (s *Service) Create(in CreateBatchInput) (domain.SampleBatch, error) {
 	if err := s.repo.Save(b.BatchID, b, event, NormalizeIdempotency(in.IdempotencyKey)); err != nil {
 		return b, err
 	}
+	s.invalidateVersionCache(b.BatchID)
 	return b, nil
 }
 
@@ -112,6 +113,7 @@ func (s *Service) AddEvidence(id string, in EvidenceInput) (domain.SampleBatch, 
 	if err = s.repo.Save(id, b, event, NormalizeIdempotency(in.IdempotencyKey)); err != nil {
 		return b, err
 	}
+	s.invalidateVersionCache(id)
 	return b, nil
 }
 
@@ -136,6 +138,7 @@ func (s *Service) Screen(id string, in ScreeningInput) (domain.SampleBatch, erro
 	if err = s.repo.Save(id, b, event, NormalizeIdempotency(in.IdempotencyKey)); err != nil {
 		return b, err
 	}
+	s.invalidateVersionCache(id)
 	return b, nil
 }
 
@@ -157,6 +160,7 @@ func (s *Service) Review(id string, in ReviewInput) (domain.SampleBatch, error) 
 	if err = s.repo.Save(id, b, event, NormalizeIdempotency(in.IdempotencyKey)); err != nil {
 		return b, err
 	}
+	s.invalidateVersionCache(id)
 	return b, nil
 }
 
@@ -178,6 +182,7 @@ func (s *Service) Rectify(id string, in RectificationInput) (domain.SampleBatch,
 	if err = s.repo.Save(id, b, event, NormalizeIdempotency(in.IdempotencyKey)); err != nil {
 		return b, err
 	}
+	s.invalidateVersionCache(id)
 	return b, nil
 }
 
@@ -214,6 +219,7 @@ func (s *Service) Release(id string, in ReleaseInput) (domain.SampleBatch, error
 	if err = s.repo.Save(id, b, event, NormalizeIdempotency(in.IdempotencyKey)); err != nil {
 		return b, err
 	}
+	s.invalidateVersionCache(id)
 	return b, nil
 }
 
@@ -281,6 +287,21 @@ func (s *Service) loadVersion(id string, expected int) (domain.SampleBatch, erro
 	s.versionCache[key] = b
 	s.versionCacheMu.Unlock()
 	return b, nil
+}
+
+// invalidateVersionCache drops every cached version snapshot for a batch after
+// the batch has been mutated and persisted. Stale snapshots would otherwise let
+// a request carrying an old expectedVersion pass the version check and
+// overwrite newer state.
+func (s *Service) invalidateVersionCache(id string) {
+	prefix := id + ":"
+	s.versionCacheMu.Lock()
+	for key := range s.versionCache {
+		if strings.HasPrefix(key, prefix) {
+			delete(s.versionCache, key)
+		}
+	}
+	s.versionCacheMu.Unlock()
 }
 func roleAllowed(role string, roles ...string) bool {
 	if role == "" {
