@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/benzhi/city-tree-release/internal/application"
+	"github.com/benzhi/city-tree-release/internal/persistence"
 )
 
 //go:embed web/index.html web/styles.css web/app.js
@@ -224,7 +225,7 @@ func writeError(w http.ResponseWriter, err error) {
 	if errors.Is(err, application.ErrNotFound) {
 		status = http.StatusNotFound
 	}
-	if errors.Is(err, application.ErrConflict) {
+	if errors.Is(err, application.ErrConflict) || errors.Is(err, persistence.ErrIdempotencyConflict) {
 		status = http.StatusConflict
 	}
 	writeJSON(w, status, map[string]any{"error": err.Error()})

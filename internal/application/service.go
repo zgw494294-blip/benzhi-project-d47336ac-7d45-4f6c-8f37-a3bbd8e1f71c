@@ -73,7 +73,7 @@ func (s *Service) Create(in CreateBatchInput) (domain.SampleBatch, error) {
 	if !roleAllowed(in.Role, "collector") {
 		return domain.SampleBatch{}, fmt.Errorf("角色无权建档")
 	}
-	if b, ok, err := s.idempotentBatch("", in.IdempotencyKey); ok || err != nil {
+	if b, ok, err := s.idempotentBatch("", in.IdempotencyKey, "BatchCreated"); ok || err != nil {
 		return b, err
 	}
 	b, event, err := domain.NewBatch(in.Location, in.CollectionWindow, in.Species, in.SuspectedIssue, in.Collector)
@@ -90,7 +90,7 @@ func (s *Service) AddEvidence(id string, in EvidenceInput) (domain.SampleBatch, 
 	if !roleAllowed(in.Role, "collector") {
 		return domain.SampleBatch{}, fmt.Errorf("角色无权提交现场证据")
 	}
-	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey); ok || err != nil {
+	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey, "EvidenceSubmitted"); ok || err != nil {
 		return b, err
 	}
 	b, err := s.loadVersion(id, in.ExpectedVersion)
@@ -115,7 +115,7 @@ func (s *Service) Screen(id string, in ScreeningInput) (domain.SampleBatch, erro
 	if err := requireIdempotencyKey(in.IdempotencyKey); err != nil {
 		return domain.SampleBatch{}, err
 	}
-	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey); ok || err != nil {
+	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey, "BatchScreened"); ok || err != nil {
 		return b, err
 	}
 	b, err := s.loadVersion(id, in.ExpectedVersion)
@@ -136,7 +136,7 @@ func (s *Service) Review(id string, in ReviewInput) (domain.SampleBatch, error) 
 	if !roleAllowed(in.Role, "expert") {
 		return domain.SampleBatch{}, fmt.Errorf("角色无权提交专家鉴定")
 	}
-	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey); ok || err != nil {
+	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey, "ExpertReviewed"); ok || err != nil {
 		return b, err
 	}
 	b, err := s.loadVersion(id, in.ExpectedVersion)
@@ -157,7 +157,7 @@ func (s *Service) Rectify(id string, in RectificationInput) (domain.SampleBatch,
 	if !roleAllowed(in.Role, "collector") {
 		return domain.SampleBatch{}, fmt.Errorf("角色无权提交整改")
 	}
-	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey); ok || err != nil {
+	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey, "RectificationClosed"); ok || err != nil {
 		return b, err
 	}
 	b, err := s.loadVersion(id, in.ExpectedVersion)
@@ -181,7 +181,7 @@ func (s *Service) Release(id string, in ReleaseInput) (domain.SampleBatch, error
 	if err := requireIdempotencyKey(in.IdempotencyKey); err != nil {
 		return domain.SampleBatch{}, err
 	}
-	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey); ok || err != nil {
+	if b, ok, err := s.idempotentBatch(id, in.IdempotencyKey, "BatchReleased"); ok || err != nil {
 		return b, err
 	}
 	b, err := s.loadVersion(id, in.ExpectedVersion)
@@ -285,17 +285,20 @@ func requireIdempotencyKey(key string) error {
 	return nil
 }
 
-func (s *Service) idempotentBatch(id, key string) (domain.SampleBatch, bool, error) {
+func (s *Service) idempotentBatch(id, key, operation string) (domain.SampleBatch, bool, error) {
 	key = NormalizeIdempotency(key)
 	if key == "" {
 		return domain.SampleBatch{}, false, nil
 	}
-	raw, ok := s.repo.Idempotent(key)
+	record, ok := s.repo.Idempotent(key)
 	if !ok {
 		return domain.SampleBatch{}, false, nil
 	}
+	if record.Operation != "" && record.Operation != operation {
+		return domain.SampleBatch{}, false, fmt.Errorf("%w：idempotencyKey 已用于其他操作", ErrConflict)
+	}
 	var batch domain.SampleBatch
-	if err := json.Unmarshal(raw, &batch); err != nil || batch.BatchID == "" {
+	if err := json.Unmarshal(record.Batch, &batch); err != nil || batch.BatchID == "" {
 		return domain.SampleBatch{}, false, fmt.Errorf("%w：idempotencyKey 已被旧请求占用", ErrConflict)
 	}
 	if id != "" && batch.BatchID != id {

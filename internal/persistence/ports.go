@@ -1,9 +1,6 @@
 package persistence
 
-import (
-	"encoding/json"
-	"github.com/benzhi/city-tree-release/internal/domain"
-)
+import "github.com/benzhi/city-tree-release/internal/domain"
 
 type Repository interface {
 	Get(string) (domain.SampleBatch, bool)
@@ -12,5 +9,5 @@ type Repository interface {
 	Events(string) []domain.AuditEvent
 	AllEvents() []domain.AuditEvent
 	Save(string, domain.SampleBatch, domain.Event, string) error
-	Idempotent(string) (json.RawMessage, bool)
+	Idempotent(string) (IdempotencyRecord, bool)
 }

@@ -15,13 +15,24 @@ import (
 	"github.com/benzhi/city-tree-release/internal/domain"
 )
 
+// ErrIdempotencyConflict 表示同一个 idempotencyKey 被用于不同操作。
+// 调用方可通过 errors.Is 判定后映射为可识别的冲突状态码。
+var ErrIdempotencyConflict = errors.New("idempotencyKey 已用于其他操作")
+
+// IdempotencyRecord 缓存某次成功操作的结果及其对应的操作类型（事件类型）。
+// Operation 为空表示旧版缓存条目，仅按批次匹配，保持向后兼容。
+type IdempotencyRecord struct {
+	Batch     json.RawMessage `json:"batch"`
+	Operation string          `json:"operation,omitempty"`
+}
+
 type Store struct {
 	mu          sync.RWMutex
 	dir         string
 	batches     map[string]domain.SampleBatch
 	events      map[string][]domain.AuditEvent
 	ledger      []domain.AuditEvent
-	idempotency map[string]json.RawMessage
+	idempotency map[string]IdempotencyRecord
 	seq         int
 	lastHash    string
 }
@@ -41,7 +52,7 @@ func Open(dir string) (*Store, error) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return nil, err
 	}
-	s := &Store{dir: dir, batches: map[string]domain.SampleBatch{}, events: map[string][]domain.AuditEvent{}, idempotency: map[string]json.RawMessage{}}
+	s := &Store{dir: dir, batches: map[string]domain.SampleBatch{}, events: map[string][]domain.AuditEvent{}, idempotency: map[string]IdempotencyRecord{}}
 	if err := s.loadSnapshot(); err != nil {
 		return nil, err
 	}
@@ -81,7 +92,11 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if idem != "" {
-		if _, ok := s.idempotency[idem]; ok {
+		if existing, ok := s.idempotency[idem]; ok {
+			// 同一操作重复提交：保持幂等，不重复落账。
+			if existing.Operation != "" && existing.Operation != event.Type {
+				return fmt.Errorf("%w: %s", ErrIdempotencyConflict, event.Type)
+			}
 			return nil
 		}
 	}
@@ -108,16 +123,16 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	s.events[id] = append(s.events[id], audit)
 	s.ledger = append(s.ledger, audit)
 	if idem != "" {
-		s.idempotency[idem] = json.RawMessage(response)
+		s.idempotency[idem] = IdempotencyRecord{Batch: append(json.RawMessage(nil), response...), Operation: event.Type}
 	}
 	return s.writeSnapshot()
 }
 
-func (s *Store) Idempotent(idem string) (json.RawMessage, bool) {
+func (s *Store) Idempotent(idem string) (IdempotencyRecord, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	v, ok := s.idempotency[idem]
-	return append(json.RawMessage(nil), v...), ok
+	return IdempotencyRecord{Batch: append(json.RawMessage(nil), v.Batch...), Operation: v.Operation}, ok
 }
 
 func (s *Store) appendAudit(a domain.AuditEvent) error {
@@ -133,7 +148,15 @@ func (s *Store) appendAudit(a domain.AuditEvent) error {
 func (s *Store) writeSnapshot() error {
 	tmp := filepath.Join(s.dir, "snapshot.tmp")
 	final := filepath.Join(s.dir, "snapshot.json")
-	b, err := json.MarshalIndent(snapshot{SchemaVersion: 1, Batches: s.batches, Idempotency: s.idempotency, Sequence: s.seq, LastHash: s.lastHash}, "", "  ")
+	idem := make(map[string]json.RawMessage, len(s.idempotency))
+	for k, rec := range s.idempotency {
+		encoded, err := json.Marshal(rec)
+		if err != nil {
+			return err
+		}
+		idem[k] = encoded
+	}
+	b, err := json.MarshalIndent(snapshot{SchemaVersion: 1, Batches: s.batches, Idempotency: idem, Sequence: s.seq, LastHash: s.lastHash}, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -162,7 +185,7 @@ func (s *Store) loadSnapshot() error {
 		s.batches = snap.Batches
 	}
 	if snap.Idempotency != nil {
-		s.idempotency = snap.Idempotency
+		s.idempotency = decodeIdempotencyRecords(snap.Idempotency)
 	}
 	s.seq = snap.Sequence
 	s.lastHash = snap.LastHash
@@ -211,4 +234,20 @@ func (s *Store) replayEvents() error {
 		s.lastHash = expectedPrev
 	}
 	return nil
+}
+
+// decodeIdempotencyRecords 兼容解析幂等缓存快照条目。
+// 新格式为 {"batch": {...}, "operation": "..."}；旧格式直接为批次对象。
+// 旧格式条目（无 operation 字段）解析后 Operation 为空，由上层按旧语义处理。
+func decodeIdempotencyRecords(raw map[string]json.RawMessage) map[string]IdempotencyRecord {
+	out := make(map[string]IdempotencyRecord, len(raw))
+	for k, v := range raw {
+		var rec IdempotencyRecord
+		if json.Unmarshal(v, &rec) == nil && len(rec.Batch) > 0 {
+			out[k] = IdempotencyRecord{Batch: append(json.RawMessage(nil), rec.Batch...), Operation: rec.Operation}
+			continue
+		}
+		out[k] = IdempotencyRecord{Batch: append(json.RawMessage(nil), v...), Operation: ""}
+	}
+	return out
 }
