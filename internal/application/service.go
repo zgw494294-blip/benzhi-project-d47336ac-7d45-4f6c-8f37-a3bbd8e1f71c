@@ -15,9 +15,14 @@ import (
 var ErrNotFound = errors.New("批次不存在")
 var ErrConflict = errors.New("版本冲突")
 
-type Service struct{ repo persistence.Repository }
+type Service struct {
+	repo                 persistence.Repository
+	verifiedCertificates map[string]map[string]any
+}
 
-func New(repo persistence.Repository) *Service { return &Service{repo: repo} }
+func New(repo persistence.Repository) *Service {
+	return &Service{repo: repo, verifiedCertificates: map[string]map[string]any{}}
+}
 
 type CreateBatchInput struct {
 	Location         string `json:"location"`
@@ -232,6 +237,11 @@ func (s *Service) VerifyCertificate(id string) (map[string]any, error) {
 	if b.Certificate == nil {
 		return map[string]any{"valid": false, "reason": "批次尚未签发凭据"}, nil
 	}
+	allEvents := s.repo.AllEvents()
+	cacheKey := certificateCacheKey(b, allEvents)
+	if cached, ok := s.verifiedCertificates[cacheKey]; ok {
+		return cloneVerificationResult(cached), nil
+	}
 	result := map[string]any{"valid": false, "credential": b.Certificate.Credential, "batchId": id, "issuedAt": b.Certificate.IssuedAt}
 	digest := domain.LegacyFreezeDigest(b)
 	if b.Certificate.FreezeVersion == "v2" {
@@ -241,7 +251,7 @@ func (s *Service) VerifyCertificate(id string) (map[string]any, error) {
 		result["reason"] = "冻结摘要不匹配"
 		return result, nil
 	}
-	if err := persistence.VerifyChain(s.repo.AllEvents()); err != nil {
+	if err := persistence.VerifyChain(allEvents); err != nil {
 		result["reason"] = "审计事件链校验失败：" + err.Error()
 		return result, nil
 	}
@@ -252,7 +262,24 @@ func (s *Service) VerifyCertificate(id string) (map[string]any, error) {
 	}
 	result["valid"] = true
 	result["reason"] = "凭据有效"
+	s.verifiedCertificates[cacheKey] = cloneVerificationResult(result)
 	return result, nil
+}
+
+func certificateCacheKey(batch domain.SampleBatch, events []domain.AuditEvent) string {
+	tip := ""
+	if len(events) > 0 {
+		tip = events[len(events)-1].Hash
+	}
+	return fmt.Sprintf("%s:%d:%d:%s", batch.BatchID, batch.Version, len(events), tip)
+}
+
+func cloneVerificationResult(result map[string]any) map[string]any {
+	cloned := make(map[string]any, len(result))
+	for key, value := range result {
+		cloned[key] = value
+	}
+	return cloned
 }
 
 func (s *Service) loadVersion(id string, expected int) (domain.SampleBatch, error) {

@@ -43,12 +43,20 @@
         "dispositionId": "disp-d157ab36e0f80951",
         "batchId": "batch-0787ffa2d641cc65",
         "plan": "隔离并观察",
+        "disposition": {
+          "name": "",
+          "steps": null,
+          "window": "",
+          "owner": ""
+        },
         "executionWindow": "2026-08-25 14:00-16:00",
         "freezeDigest": "0a4227131b0f9d774519d28694c3a8aa1ccf19496da95ff5535fbf9592fa5ee3",
+        "freezeVersion": "",
         "credential": "CERT-0a4227131b0f9d77",
         "issuer": "自检复核员",
         "issuedAt": "2026-08-24T23:18:34.779720685Z"
-      }
+      },
+      "evidenceScore": 0
     },
     "batch-3704a7c8518081ee": {
       "batchId": "batch-3704a7c8518081ee",
@@ -92,12 +100,20 @@
         "dispositionId": "disp-6163076214b0b731",
         "batchId": "batch-3704a7c8518081ee",
         "plan": "隔离并观察",
+        "disposition": {
+          "name": "",
+          "steps": null,
+          "window": "",
+          "owner": ""
+        },
         "executionWindow": "2026-08-25 14:00-16:00",
         "freezeDigest": "d8a5c31c827d93ded72bebb3dfd6d1a540b33f1f67a9d55e3f960bc2048349ea",
+        "freezeVersion": "",
         "credential": "CERT-d8a5c31c827d93de",
         "issuer": "自检复核员",
         "issuedAt": "2026-08-24T23:13:33.673692457Z"
-      }
+      },
+      "evidenceScore": 0
     },
     "batch-8d8a12bc5fb19c5d": {
       "batchId": "batch-8d8a12bc5fb19c5d",
@@ -141,12 +157,20 @@
         "dispositionId": "disp-fed27e08b851aaa3",
         "batchId": "batch-8d8a12bc5fb19c5d",
         "plan": "隔离并观察",
+        "disposition": {
+          "name": "",
+          "steps": null,
+          "window": "",
+          "owner": ""
+        },
         "executionWindow": "2026-08-25 14:00-16:00",
         "freezeDigest": "1f69df7e4cb71aca4e22b1cc615c36e09cddd7279b1b35e358929d273388b74a",
+        "freezeVersion": "",
         "credential": "CERT-1f69df7e4cb71aca",
         "issuer": "自检复核员",
         "issuedAt": "2026-08-24T23:21:06.899995257Z"
-      }
+      },
+      "evidenceScore": 0
     },
     "batch-a31eb4644933cf49": {
       "batchId": "batch-a31eb4644933cf49",
@@ -190,12 +214,87 @@
         "dispositionId": "disp-f7e9749411e16452",
         "batchId": "batch-a31eb4644933cf49",
         "plan": "隔离并观察",
+        "disposition": {
+          "name": "",
+          "steps": null,
+          "window": "",
+          "owner": ""
+        },
         "executionWindow": "2026-08-25 14:00-16:00",
         "freezeDigest": "5eb3816dc19ece596f6fea890bfb79ba4544135605c6e730b90d435236aa48d8",
+        "freezeVersion": "",
         "credential": "CERT-5eb3816dc19ece59",
         "issuer": "自检复核员",
         "issuedAt": "2026-08-24T23:17:55.186747778Z"
-      }
+      },
+      "evidenceScore": 0
+    },
+    "batch-b320f671013fadb4": {
+      "batchId": "batch-b320f671013fadb4",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "已放行",
+      "version": 4,
+      "createdAt": "2026-08-24T23:56:07.994889792Z",
+      "updatedAt": "2026-08-24T23:56:08.008729771Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-0ac167b7fc8ceb8d",
+          "batchId": "batch-b320f671013fadb4",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-24T23:56:07.996044813Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-24T23:56:08.006372294Z"
+          }
+        }
+      ],
+      "review": {
+        "reviewId": "review-6824d0409db717e0",
+        "batchId": "batch-b320f671013fadb4",
+        "conclusion": "轻度叶斑，风险低",
+        "riskLevel": "低",
+        "issues": [],
+        "rectification": "",
+        "reviewOpinion": "",
+        "reviewer": "自检鉴定员",
+        "reviewedAt": "2026-08-24T23:56:08.007604463Z"
+      },
+      "certificate": {
+        "dispositionId": "disp-a15d8d23375fa162",
+        "batchId": "batch-b320f671013fadb4",
+        "plan": "隔离病株；持续观察",
+        "disposition": {
+          "name": "叶斑处置",
+          "steps": [
+            "隔离病株",
+            "持续观察"
+          ],
+          "window": "2026-08-25 14:00-16:00",
+          "owner": "自检绿化组"
+        },
+        "executionWindow": "2026-08-25 14:00-16:00",
+        "freezeDigest": "7abcc1a7a6c7e99f83773a1bd5eb34107c5efc2de261c08b324f6e27c7c4fa4d",
+        "freezeVersion": "v2",
+        "credential": "CERT-7abcc1a7a6c7e99f",
+        "issuer": "自检复核员",
+        "issuedAt": "2026-08-24T23:56:08.008729771Z"
+      },
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-24T23:56:08.006372294Z"
     },
     "batch-b60c0b5bdbf54b5a": {
       "batchId": "batch-b60c0b5bdbf54b5a",
@@ -239,12 +338,20 @@
         "dispositionId": "disp-12cea8cef0f54405",
         "batchId": "batch-b60c0b5bdbf54b5a",
         "plan": "隔离并观察",
+        "disposition": {
+          "name": "",
+          "steps": null,
+          "window": "",
+          "owner": ""
+        },
         "executionWindow": "2026-08-25 14:00-16:00",
         "freezeDigest": "49d162a9f776940e8b97bb46f3ff042a1c6615fd39dce927dcdc2463efd25697",
+        "freezeVersion": "",
         "credential": "CERT-49d162a9f776940e",
         "issuer": "自检复核员",
         "issuedAt": "2026-08-24T23:16:46.242803813Z"
-      }
+      },
+      "evidenceScore": 0
     }
   },
   "idempotency": {
@@ -307,6 +414,19 @@
       "version": 0,
       "createdAt": "2026-08-24T23:21:06.897497631Z",
       "updatedAt": "2026-08-24T23:21:06.897497631Z"
+    },
+    "selfcheck-create-1787615767994886618": {
+      "batchId": "batch-b320f671013fadb4",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待采集",
+      "version": 0,
+      "createdAt": "2026-08-24T23:56:07.994889792Z",
+      "updatedAt": "2026-08-24T23:56:07.994889792Z",
+      "evidenceScore": 0
     },
     "selfcheck-evidence-1787613213672582236": {
       "evidenceId": "evidence-a09c433f472500d9",
@@ -378,6 +498,35 @@
       "submittedAt": "2026-08-24T23:21:06.898036203Z",
       "integrity": "通过"
     },
+    "selfcheck-evidence-1787615767994886618": {
+      "batchId": "batch-b320f671013fadb4",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待检查",
+      "version": 1,
+      "createdAt": "2026-08-24T23:56:07.994889792Z",
+      "updatedAt": "2026-08-24T23:56:07.99604667Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-0ac167b7fc8ceb8d",
+          "batchId": "batch-b320f671013fadb4",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-24T23:56:07.996044813Z",
+          "integrity": "待检查"
+        }
+      ],
+      "evidenceScore": 0
+    },
     "selfcheck-release-1787613213672582236": {
       "dispositionId": "disp-6163076214b0b731",
       "batchId": "batch-3704a7c8518081ee",
@@ -427,6 +576,73 @@
       "credential": "CERT-1f69df7e4cb71aca",
       "issuer": "自检复核员",
       "issuedAt": "2026-08-24T23:21:06.899995257Z"
+    },
+    "selfcheck-release-1787615767994886618": {
+      "batchId": "batch-b320f671013fadb4",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "已放行",
+      "version": 4,
+      "createdAt": "2026-08-24T23:56:07.994889792Z",
+      "updatedAt": "2026-08-24T23:56:08.008729771Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-0ac167b7fc8ceb8d",
+          "batchId": "batch-b320f671013fadb4",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-24T23:56:07.996044813Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-24T23:56:08.006372294Z"
+          }
+        }
+      ],
+      "review": {
+        "reviewId": "review-6824d0409db717e0",
+        "batchId": "batch-b320f671013fadb4",
+        "conclusion": "轻度叶斑，风险低",
+        "riskLevel": "低",
+        "issues": [],
+        "rectification": "",
+        "reviewOpinion": "",
+        "reviewer": "自检鉴定员",
+        "reviewedAt": "2026-08-24T23:56:08.007604463Z"
+      },
+      "certificate": {
+        "dispositionId": "disp-a15d8d23375fa162",
+        "batchId": "batch-b320f671013fadb4",
+        "plan": "隔离病株；持续观察",
+        "disposition": {
+          "name": "叶斑处置",
+          "steps": [
+            "隔离病株",
+            "持续观察"
+          ],
+          "window": "2026-08-25 14:00-16:00",
+          "owner": "自检绿化组"
+        },
+        "executionWindow": "2026-08-25 14:00-16:00",
+        "freezeDigest": "7abcc1a7a6c7e99f83773a1bd5eb34107c5efc2de261c08b324f6e27c7c4fa4d",
+        "freezeVersion": "v2",
+        "credential": "CERT-7abcc1a7a6c7e99f",
+        "issuer": "自检复核员",
+        "issuedAt": "2026-08-24T23:56:08.008729771Z"
+      },
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-24T23:56:08.006372294Z"
     },
     "selfcheck-review-1787613213672582236": {
       "reviewId": "review-6a2543ce0718c1e8",
@@ -483,6 +699,53 @@
       "reviewer": "自检鉴定员",
       "reviewedAt": "2026-08-24T23:21:06.899281645Z"
     },
+    "selfcheck-review-1787615767994886618": {
+      "batchId": "batch-b320f671013fadb4",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待复核",
+      "version": 3,
+      "createdAt": "2026-08-24T23:56:07.994889792Z",
+      "updatedAt": "2026-08-24T23:56:08.007604789Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-0ac167b7fc8ceb8d",
+          "batchId": "batch-b320f671013fadb4",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-24T23:56:07.996044813Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-24T23:56:08.006372294Z"
+          }
+        }
+      ],
+      "review": {
+        "reviewId": "review-6824d0409db717e0",
+        "batchId": "batch-b320f671013fadb4",
+        "conclusion": "轻度叶斑，风险低",
+        "riskLevel": "低",
+        "issues": [],
+        "rectification": "",
+        "reviewOpinion": "",
+        "reviewer": "自检鉴定员",
+        "reviewedAt": "2026-08-24T23:56:08.007604463Z"
+      },
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-24T23:56:08.006372294Z"
+    },
     "selfcheck-screen-1787613213672582236": {
       "result": "通过"
     },
@@ -497,8 +760,44 @@
     },
     "selfcheck-screen-1787613666897495761": {
       "result": "通过"
+    },
+    "selfcheck-screen-1787615767994886618": {
+      "batchId": "batch-b320f671013fadb4",
+      "location": "静安公园 A 区",
+      "collectionWindow": "2026-08-25 08:00-10:00",
+      "species": "悬铃木",
+      "suspectedIssue": "叶斑",
+      "collector": "自检采集员",
+      "status": "待鉴定",
+      "version": 2,
+      "createdAt": "2026-08-24T23:56:07.994889792Z",
+      "updatedAt": "2026-08-24T23:56:08.006372294Z",
+      "evidence": [
+        {
+          "evidenceId": "evidence-0ac167b7fc8ceb8d",
+          "batchId": "batch-b320f671013fadb4",
+          "sampleNumber": "SC-001",
+          "grid": "31.23,121.47",
+          "photoDigest": "sha256:selfcheck",
+          "environment": {
+            "humidity": 65,
+            "temperature": 23
+          },
+          "notes": "自检证据",
+          "submittedAt": "2026-08-24T23:56:07.996044813Z",
+          "integrity": "通过",
+          "check": {
+            "complete": true,
+            "warnings": [],
+            "score": 100,
+            "checkedAt": "2026-08-24T23:56:08.006372294Z"
+          }
+        }
+      ],
+      "evidenceScore": 100,
+      "evidenceCheckedAt": "2026-08-24T23:56:08.006372294Z"
     }
   },
-  "sequence": 25,
-  "lastHash": "39c20fe2d4a982bdb2df061e47812e5ed64653c550c9a784321d1597025530fb"
+  "sequence": 30,
+  "lastHash": "e46a45a5a2de04ac72717a6823ae3f7335847567e9cd8b6bcf044d85116f5b46"
 }
