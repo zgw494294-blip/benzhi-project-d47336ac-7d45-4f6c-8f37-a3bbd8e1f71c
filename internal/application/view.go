@@ -25,6 +25,14 @@ type BatchListResult struct {
 	Batches  []domain.BatchSummary `json:"batches"`
 }
 
+type batchListCacheKey struct {
+	status   domain.BatchStatus
+	query    string
+	role     domain.Role
+	page     int
+	pageSize int
+}
+
 func (s *Service) ListBatches(input BatchListInput) (BatchListResult, error) {
 	status, ok := domain.ParseStatus(input.Status)
 	if !ok {
@@ -54,12 +62,33 @@ func (s *Service) ListBatches(input BatchListInput) (BatchListResult, error) {
 	if pageSize < 1 || pageSize > 100 {
 		return BatchListResult{}, fmt.Errorf("pageSize 必须在 1 到 100 之间")
 	}
+	cacheKey := batchListCacheKey{status: status, query: query, role: role, page: page, pageSize: pageSize}
+	if cached, ok := s.cachedBatchList(cacheKey); ok {
+		return cached, nil
+	}
 	result := s.repo.Query(persistence.BatchQuery{Status: status, Term: query, Role: role, Page: page, PageSize: pageSize})
 	summaries := make([]domain.BatchSummary, 0, len(result.Batches))
 	for _, batch := range result.Batches {
 		summaries = append(summaries, domain.Summarize(batch))
 	}
-	return BatchListResult{Total: result.Total, Page: result.Page, PageSize: result.PageSize, HasNext: result.HasNext, Batches: summaries}, nil
+	response := BatchListResult{Total: result.Total, Page: result.Page, PageSize: result.PageSize, HasNext: result.HasNext, Batches: summaries}
+	s.cacheBatchList(cacheKey, response)
+	return response, nil
+}
+
+func (s *Service) cachedBatchList(key batchListCacheKey) (BatchListResult, bool) {
+	s.listCacheMu.RLock()
+	defer s.listCacheMu.RUnlock()
+	result, ok := s.listCache[key]
+	result.Batches = append([]domain.BatchSummary(nil), result.Batches...)
+	return result, ok
+}
+
+func (s *Service) cacheBatchList(key batchListCacheKey, result BatchListResult) {
+	s.listCacheMu.Lock()
+	defer s.listCacheMu.Unlock()
+	result.Batches = append([]domain.BatchSummary(nil), result.Batches...)
+	s.listCache[key] = result
 }
 
 type WorkbenchView struct {

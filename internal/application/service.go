@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/benzhi/city-tree-release/internal/domain"
@@ -15,9 +16,15 @@ import (
 var ErrNotFound = errors.New("批次不存在")
 var ErrConflict = errors.New("版本冲突")
 
-type Service struct{ repo persistence.Repository }
+type Service struct {
+	repo        persistence.Repository
+	listCacheMu sync.RWMutex
+	listCache   map[batchListCacheKey]BatchListResult
+}
 
-func New(repo persistence.Repository) *Service { return &Service{repo: repo} }
+func New(repo persistence.Repository) *Service {
+	return &Service{repo: repo, listCache: make(map[batchListCacheKey]BatchListResult)}
+}
 
 type CreateBatchInput struct {
 	Location         string `json:"location"`
