@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/benzhi/city-tree-release/internal/domain"
@@ -15,9 +16,15 @@ import (
 var ErrNotFound = errors.New("批次不存在")
 var ErrConflict = errors.New("版本冲突")
 
-type Service struct{ repo persistence.Repository }
+type Service struct {
+	repo           persistence.Repository
+	versionCacheMu sync.RWMutex
+	versionCache   map[string]domain.SampleBatch
+}
 
-func New(repo persistence.Repository) *Service { return &Service{repo: repo} }
+func New(repo persistence.Repository) *Service {
+	return &Service{repo: repo, versionCache: make(map[string]domain.SampleBatch)}
+}
 
 type CreateBatchInput struct {
 	Location         string `json:"location"`
@@ -256,6 +263,13 @@ func (s *Service) VerifyCertificate(id string) (map[string]any, error) {
 }
 
 func (s *Service) loadVersion(id string, expected int) (domain.SampleBatch, error) {
+	key := fmt.Sprintf("%s:%d", id, expected)
+	s.versionCacheMu.RLock()
+	cached, ok := s.versionCache[key]
+	s.versionCacheMu.RUnlock()
+	if ok {
+		return cached, nil
+	}
 	b, err := s.Get(id)
 	if err != nil {
 		return b, err
@@ -263,6 +277,9 @@ func (s *Service) loadVersion(id string, expected int) (domain.SampleBatch, erro
 	if b.Version != expected {
 		return b, fmt.Errorf("%w：期望 %d，当前 %d", ErrConflict, expected, b.Version)
 	}
+	s.versionCacheMu.Lock()
+	s.versionCache[key] = b
+	s.versionCacheMu.Unlock()
 	return b, nil
 }
 func roleAllowed(role string, roles ...string) bool {
