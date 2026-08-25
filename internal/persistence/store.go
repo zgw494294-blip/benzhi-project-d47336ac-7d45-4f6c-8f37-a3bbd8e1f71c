@@ -78,13 +78,16 @@ func (s *Store) AllEvents() []domain.AuditEvent {
 }
 
 func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, idem string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
 	if idem != "" {
 		if _, ok := s.idempotency[idem]; ok {
+			s.mu.RUnlock()
 			return nil
 		}
 	}
+	nextSequence := s.seq + 1
+	prev := s.lastHash
+	s.mu.RUnlock()
 	payload, err := json.Marshal(event.Payload)
 	if err != nil {
 		return fmt.Errorf("事件载荷无法编码: %w", err)
@@ -93,12 +96,12 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	if err != nil {
 		return fmt.Errorf("批次无法编码: %w", err)
 	}
-	nextSequence := s.seq + 1
-	prev := s.lastHash
 	base := fmt.Sprintf("%d|%s|%s|%s|%s", nextSequence, id, event.Type, string(payload), prev)
 	h := sha256.Sum256([]byte(base))
 	hash := hex.EncodeToString(h[:])
 	audit := domain.AuditEvent{EventID: domain.NewID("event"), BatchID: id, Sequence: nextSequence, EventType: event.Type, Payload: event.Payload, PrevHash: prev, Hash: hash, OccurredAt: time.Now().UTC(), SchemaVersion: 1, HashPayload: append(json.RawMessage(nil), payload...)}
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	if err := s.appendAudit(audit); err != nil {
 		return err
 	}
