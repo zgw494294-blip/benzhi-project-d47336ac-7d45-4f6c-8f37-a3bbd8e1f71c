@@ -99,9 +99,6 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	h := sha256.Sum256([]byte(base))
 	hash := hex.EncodeToString(h[:])
 	audit := domain.AuditEvent{EventID: domain.NewID("event"), BatchID: id, Sequence: nextSequence, EventType: event.Type, Payload: event.Payload, PrevHash: prev, Hash: hash, OccurredAt: time.Now().UTC(), SchemaVersion: 1, HashPayload: append(json.RawMessage(nil), payload...)}
-	if err := s.appendAudit(audit); err != nil {
-		return err
-	}
 	s.seq = nextSequence
 	s.lastHash = hash
 	s.batches[id] = batch
@@ -109,6 +106,9 @@ func (s *Store) Save(id string, batch domain.SampleBatch, event domain.Event, id
 	s.ledger = append(s.ledger, audit)
 	if idem != "" {
 		s.idempotency[idem] = json.RawMessage(response)
+	}
+	if err := s.appendAudit(audit); err != nil {
+		return err
 	}
 	return s.writeSnapshot()
 }
