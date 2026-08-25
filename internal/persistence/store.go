@@ -69,7 +69,7 @@ func (s *Store) List() []domain.SampleBatch {
 func (s *Store) Events(id string) []domain.AuditEvent {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	return append([]domain.AuditEvent(nil), s.events[id]...)
+	return s.events[id]
 }
 func (s *Store) AllEvents() []domain.AuditEvent {
 	s.mu.RLock()
