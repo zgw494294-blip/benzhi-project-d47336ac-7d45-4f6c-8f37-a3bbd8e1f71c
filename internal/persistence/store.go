@@ -193,6 +193,11 @@ func (s *Store) replayEvents() error {
 			return fmt.Errorf("事件载荷损坏: %w", err)
 		}
 		a.HashPayload = append(json.RawMessage(nil), raw.Payload...)
+		if a.EventType != "BatchCreated" {
+			if err := VerifyEvent(a); err != nil {
+				return fmt.Errorf("事件完整性校验失败: %w", err)
+			}
+		}
 		if a.PrevHash != expectedPrev {
 			return fmt.Errorf("事件摘要链断裂")
 		}
